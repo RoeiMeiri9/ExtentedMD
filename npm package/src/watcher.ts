@@ -11,7 +11,7 @@ export function watchFile(pathToWatch: string, benchmark: boolean) {
     },
     persistent: true,
   });
-  watcher.on("change", (path) => processFile(path, benchmark));
+  watcher.on("change", (path) => processFile(path));
 }
 
 export async function clear() {
