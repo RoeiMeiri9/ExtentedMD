@@ -2,6 +2,7 @@
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { watchFile, clear } from "./watcher.js";
+import { Logger } from "./utils/logger.js";
 
 async function init() {
   const argv = yargs(hideBin(process.argv))
@@ -11,11 +12,6 @@ async function init() {
       type: "string",
       description: "File or folder to watch",
     })
-    .option("benchmark", {
-      alias: "b",
-      type: "boolean",
-      description: "Prints length of operation in ms",
-    })
     .help("help") // enables --help
     .alias("help", "h").argv; // alias -h
 
@@ -24,12 +20,9 @@ async function init() {
   if (!path) {
     throw new Error("No file/folder specified. Use --help for usage.");
   }
-  if (benchmark) {
-    console.log("Benchmark mode enabled — parsing times will be logged.");
-  }
-  console.log("Watching:", path);
+  Logger.info("Watching:", path);
 
-  watchFile(path, benchmark ?? false);
+  watchFile(path);
   process.stdin.resume();
   process.on("beforeExit", clear);
 }

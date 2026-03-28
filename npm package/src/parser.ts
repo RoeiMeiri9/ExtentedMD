@@ -1,86 +1,95 @@
-import { load, dump } from "js-yaml";
+import { load as loadYaml, dump as dumpYaml, YAMLException } from "js-yaml";
 import { readFile as fsReadFile, writeFile as fsWriteFile } from "fs/promises";
-import type { VariablesMatcher, FMContent } from "./types.js";
+import type {
+  VariablesMatcher,
+  FMContent,
+  Status,
+  OrchestratorOutput,
+} from "./types.js";
+import { Logger } from "./utils/logger.js";
 
-export async function processFile(path: string, benchmark: boolean) {
-  const startTime = benchmark ? Date.now() : 0;
+export async function processFile(path: string) {
+  const startTime = process.hrtime.bigint();
 
   try {
     const content = await fsReadFile(path, "utf-8");
-
     const processed = await orchestrator(content);
 
     const outPath = path.replace(/\.tmd$/, ".md");
-    await fsWriteFile(outPath, processed, "utf-8");
 
-    if (benchmark) console.log(Date.now() - startTime);
+    const endTime = process.hrtime.bigint();
+    const time = endTime - startTime;
+
+    await fsWriteFile(outPath, processed.content, "utf-8");
+    Logger.reportCompilation(path, time, processed.status);
   } catch (err) {
-    console.error("Error processing file:", err);
+    Logger.error("Error processing file:", err);
   }
 }
 
-async function orchestrator(content: string): Promise<string> {
+async function orchestrator(content: string): Promise<OrchestratorOutput> {
   const vars = await extractVariables(content);
-  return parseContent(content, vars);
+  return {
+    content: parseContent(content, vars),
+    status: vars.encounteredError ? "WARN" : "SUCCESS",
+  };
 }
 
 async function extractVariables(content: string): Promise<VariablesMatcher> {
-  const eolMatch = content.match(/\r\n|\r|\n/);
-  const EOL = eolMatch ? eolMatch[0] : "\n";
+  const endOfLineMatch = content.match(/\r\n|\r|\n/);
+  const EOL = endOfLineMatch ? endOfLineMatch[0] : "\n";
 
-  const fmMatch = content.match(/^---[\r\n]+([\s\S]*?)^---[\r\n]/m);
-  if (!fmMatch || !fmMatch[1]) return { EOL };
-
-  let fmObject: FMContent;
-  try {
-    fmObject = (await load(fmMatch[1])) as FMContent;
-  } catch (err) {
-    console.log("Error parsing file:", err);
-    return { EOL, fmMatch, newFMContent: fmMatch[1] };
+  const frontMatterMatch = content.match(/^---[\r\n]+([\s\S]*?)^---[\r\n]/m);
+  if (!frontMatterMatch || !frontMatterMatch[1]) {
+    return { encounteredError: false, EOL };
   }
 
-  const variables = fmObject.variables ? { ...fmObject.variables } : undefined;
-  delete fmObject.variables;
+  try {
+    const fmObject = (await loadYaml(frontMatterMatch[1])) as FMContent;
 
-  const hasOtherKeys = Object.keys(fmObject).length > 0;
-  const newFMContent = hasOtherKeys ? dump(fmObject, { indent: 2 }) : "";
+    const variables = fmObject.variables
+      ? { ...fmObject.variables }
+      : undefined;
+    delete fmObject.variables;
 
-  return { variables, newFMContent, fmMatch, EOL };
+    const hasOtherKeys = Object.keys(fmObject).length > 0;
+    const newFMContent = hasOtherKeys ? dumpYaml(fmObject, { indent: 2 }) : "";
+
+    return {
+      encounteredError: false,
+      variables,
+      newFMContent,
+      fmMatch: frontMatterMatch,
+      EOL,
+    };
+  } catch (err) {
+    Logger.yamlException(err as YAMLException);
+    return {
+      encounteredError: true,
+      EOL,
+      fmMatch: frontMatterMatch,
+      newFMContent: frontMatterMatch[1],
+    };
+  }
 }
 
 function parseContent(text: string, fm: VariablesMatcher): string {
-  let out = "";
-
   const startIndex = fm.fmMatch ? fm.fmMatch[0].length : 0;
-  let body = text.slice(startIndex + 1);
+  const body = text
+    .slice(startIndex)
+    .replace(/^---[\r\n]+/, "")
+    .trimStart();
 
-  body = body.replace(/^(\r\n|\n\r|\n|\r)/, "");
+  let out = fm.newFMContent
+    ? `---${fm.EOL}${fm.newFMContent}---${fm.EOL}${fm.EOL}`
+    : "";
 
-  if (fm.newFMContent) {
-    out += `---${fm.EOL}${fm.newFMContent}---${fm.EOL}`;
-  }
+  if (!fm.variables) return out + body;
 
-  if (!fm.variables) {
-    out += body;
-    return out;
-  }
-
-  let i = 0;
-  while (i < body.length) {
-    if (body[i] === "{" && body[i + 1] === "{") {
-      i += 2;
-      let varName = "";
-      while (!(body[i] === "}" && body[i + 1] === "}")) {
-        varName += body[i];
-        i++;
-      }
-      i += 2;
-      out += fm.variables[varName.trim()] ?? "";
-    } else {
-      out += body[i];
-      i++;
-    }
-  }
-
-  return out;
+  return (
+    out +
+    body.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, varName) => {
+      return fm.variables![varName.trim()] ?? "";
+    })
+  );
 }
