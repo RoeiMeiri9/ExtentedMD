@@ -15,7 +15,7 @@ export async function processFile(path: string) {
     const content = await fsReadFile(path, "utf-8");
     const processed = await orchestrator(content);
 
-    const outPath = path.replace(/\.tmd$/, ".md");
+    const outPath = path.replace(/\.emd$/, ".md");
 
     const endTime = process.hrtime.bigint();
     const time = endTime - startTime;

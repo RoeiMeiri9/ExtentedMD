@@ -1,11 +1,11 @@
 {
   "iconDefinitions": {
-    "tmd-file": {
-      "iconPath": "./tmd.svg"
+    "emd-file": {
+      "iconPath": "./emd.svg"
     }
   },
   "fileExtensions": {
-    "tmd": "tmd-file"
+    "emd": "emd-file"
   },
   "light": {},
   "dark": {}

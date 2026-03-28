@@ -7,7 +7,7 @@
       "name": "Test",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "tmd", "--", "--watch", "./tests/readme.tmd"],
+      "runtimeArgs": ["run", "emd", "--", "--watch", "./tests/readme.emd"],
       "program": "${workspaceFolder}/your-main-file.js" // Adjust if needed
     },
     {
@@ -16,7 +16,7 @@
       "name": "Test and print benchmark",
       "skipFiles": ["<node_internals>/**"],
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "tmd", "--", "-w", "./tests/readme.tmd", "-b"],
+      "runtimeArgs": ["run", "emd", "--", "-w", "./tests/readme.emd", "-b"],
       "program": "${workspaceFolder}/your-main-file.js" // Adjust if needed
     }
   ]

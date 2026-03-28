@@ -1,23 +1,23 @@
 import * as vscode from "vscode";
 import { provideCompletionItems } from "./completion";
-import { TmdDefinitionProvider } from "./TmdDefinitionProvide";
+import { EmdDefinitionProvider } from "./EmdDefinitionProvide";
 import { provideDocumentFormattingEdits } from "./formatter";
 import { checkUnrecognizedVariable } from "./checkers";
 import { getVariables } from "./tools";
-import { TmdRenameProvider } from "./TmdRenameProvider";
-import { TmdQuoteFixProvider } from "./TmdQuoteFixProvider";
+import { EmdRenameProvider } from "./EmdRenameProvider";
+import { EmdQuoteFixProvider } from "./EmdQuoteFixProvider";
 import { fixQuotes } from "./commands";
 
 export function activate(context: vscode.ExtensionContext) {
-  const fileType = "tmd";
-  const collections = vscode.languages.createDiagnosticCollection("tmd");
+  const fileType = "emd";
+  const collections = vscode.languages.createDiagnosticCollection("emd");
 
   const provider = vscode.languages.registerCompletionItemProvider(
     fileType,
     {
       provideCompletionItems,
     },
-    "{"
+    "{",
   );
 
   vscode.languages.registerDocumentFormattingEditProvider(fileType, {
@@ -26,12 +26,12 @@ export function activate(context: vscode.ExtensionContext) {
 
   const definitionProvider = vscode.languages.registerDefinitionProvider(
     fileType,
-    new TmdDefinitionProvider()
+    new EmdDefinitionProvider(),
   );
 
   const renameProvider = vscode.languages.registerRenameProvider(
-    "tmd",
-    new TmdRenameProvider()
+    "emd",
+    new EmdRenameProvider(),
   );
 
   vscode.workspace.textDocuments.forEach(check);
@@ -39,23 +39,23 @@ export function activate(context: vscode.ExtensionContext) {
   const onNewOpenedDocument = vscode.workspace.onDidOpenTextDocument(check);
 
   const onChangedDocument = vscode.workspace.onDidChangeTextDocument((e) =>
-    check(e.document)
+    check(e.document),
   );
 
   const onClosed = vscode.workspace.onDidCloseTextDocument((doc) =>
-    collections.delete(doc.uri)
+    collections.delete(doc.uri),
   );
 
   const quoteFixProvider = vscode.languages.registerCodeActionsProvider(
-    "tmd",
-    new TmdQuoteFixProvider(),
+    "emd",
+    new EmdQuoteFixProvider(),
     {
-      providedCodeActionKinds: TmdQuoteFixProvider.providedCodeActionKinds,
-    }
+      providedCodeActionKinds: EmdQuoteFixProvider.providedCodeActionKinds,
+    },
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("tmd.fixQuotes", fixQuotes)
+    vscode.commands.registerCommand("emd.fixQuotes", fixQuotes),
   );
 
   context.subscriptions.push(
@@ -66,19 +66,19 @@ export function activate(context: vscode.ExtensionContext) {
     onChangedDocument,
     renameProvider,
     onClosed,
-    quoteFixProvider
+    quoteFixProvider,
   );
 
   function check(document: vscode.TextDocument) {
     let diagnostics: vscode.Diagnostic[] = [];
-    if (document.languageId !== "tmd") return;
+    if (document.languageId !== "emd") return;
 
     const text = document.getText();
 
     const { fmData } = getVariables(document);
     if (fmData?.variables) {
       diagnostics.push(
-        ...checkUnrecognizedVariable(text, document, fmData.variables)
+        ...checkUnrecognizedVariable(text, document, fmData.variables),
       );
     }
 

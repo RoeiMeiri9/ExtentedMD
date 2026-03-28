@@ -4,9 +4,9 @@ version: "0.0.1"
 date: "22/11/2025"
 
 variables:
-  app-name: "TemplateMD"
+  app-name: "ExtendedMD"
   mark-down: "Markdown"
-  file-type: "`.tmd`"
+  file-type: "`.emd`"
   markdown-file-type: "`.md`"
   front-matter: "Front Matter"
   variables: "`variables`"
@@ -26,9 +26,9 @@ All of the values must be written under {{variables}} in the `{{front-matter}}`,
 ```YAML
 ---
 variables:
-  app-name: "TemplateMD"
+  app-name: "ExtendedMD"
   mark-down: "Markdown"
-  file-type: "`.tmd`"
+  file-type: "`.emd`"
   markdown-file-type: "`.md`"
   front-matter: "Front Matter"
   variables: "`variables`"
@@ -38,7 +38,7 @@ variables:
 To compile the {{file-type}} file, install the {{app-name}} package using:
 
 ```BASH
-$ npm install tmd
+$ npm install emd
 ```
 
 > [!Note]
@@ -48,7 +48,7 @@ $ npm install tmd
 To run:
 
 ```BASH
-$ tmd --watch path\to\file-or-folder
+$ emd --watch path\to\file-or-folder
 ```
 
 Then, every time you save your {{file-type}} file, a {{markdown-file-type}} file will be generated next to the original {{file-type}}.

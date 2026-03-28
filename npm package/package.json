@@ -1,19 +1,19 @@
 {
-  "name": "templatemd",
+  "name": "extendedmd",
   "version": "1.0.0",
   "description": "Allows you to write Markdown files with templates",
   "keywords": [
-    "templatemd"
+    "extendedmd"
   ],
   "license": "MIT",
   "author": "Roei Meiri",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "tmd": "node dist/index.js"
+    "emd": "node dist/index.js"
   },
   "bin": {
-    "tmd": "./dist/index.js"
+    "emd": "./dist/index.js"
   },
   "dependencies": {
     "chokidar": "^4.0.3",

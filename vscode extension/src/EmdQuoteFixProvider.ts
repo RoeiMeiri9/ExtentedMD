@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export class TmdQuoteFixProvider implements vscode.CodeActionProvider {
+export class EmdQuoteFixProvider implements vscode.CodeActionProvider {
   public static readonly providedCodeActionKinds = [
     vscode.CodeActionKind.QuickFix,
   ];
@@ -9,7 +9,7 @@ export class TmdQuoteFixProvider implements vscode.CodeActionProvider {
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
     context: vscode.CodeActionContext,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): vscode.ProviderResult<Array<vscode.Command>> {
     // Only provide actions if we're on a specific line (cursor position)
     if (range.start.line !== range.end.line) {
@@ -45,14 +45,14 @@ export class TmdQuoteFixProvider implements vscode.CodeActionProvider {
     // Create the code action (command-based)
     const fix = new vscode.CodeAction(
       "Remove quotes from variable value",
-      vscode.CodeActionKind.QuickFix
+      vscode.CodeActionKind.QuickFix,
     );
 
     const newText = `${indent}${key}: ${value}`;
 
     fix.command = {
       title: "Remove quotes from variable value",
-      command: "tmd.fixQuotes",
+      command: "emd.fixQuotes",
       arguments: [document.uri, line.range, newText],
     };
 

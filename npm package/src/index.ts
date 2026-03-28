@@ -6,7 +6,7 @@ import { Logger } from "./utils/logger.js";
 
 async function init() {
   const argv = yargs(hideBin(process.argv))
-    .usage("Usage: tmd --watch <file|folder>")
+    .usage("Usage: emd --watch <file|folder>")
     .option("watch", {
       alias: "w",
       type: "string",
