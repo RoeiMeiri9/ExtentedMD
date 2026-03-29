@@ -1,20 +1,20 @@
 {
-  "scopeName": "template.injection.tmd",
-  "injectionSelector": "L:text.html.markdown, L:source.tmd",
+  "scopeName": "template.injection.emd",
+  "injectionSelector": "L:text.html.markdown, L:source.emd",
   "patterns": [
     {
-      "name": "meta.template.tmd",
+      "name": "meta.template.emd",
       "begin": "\\{\\{",
       "end": "\\}\\}",
       "beginCaptures": {
-        "0": { "name": "punctuation.definition.template.begin.tmd" }
+        "0": { "name": "punctuation.definition.template.begin.emd" }
       },
       "endCaptures": {
-        "0": { "name": "punctuation.definition.template.end.tmd" }
+        "0": { "name": "punctuation.definition.template.end.emd" }
       },
       "patterns": [
         {
-          "name": "variable.other.tmd",
+          "name": "variable.other.emd",
           "match": "."
         }
       ]
@@ -23,7 +23,7 @@
       "name": "allowed.backslash",
       "patterns": [
         {
-          "name": "constant.character.escape.tmd",
+          "name": "constant.character.escape.emd",
           "match": "(?<!\\\\)(\\\\[\\\\`'\"*_{}\\[\\]()#+.!|<>\\/&$~^=:nrst-])+"
         }
       ]

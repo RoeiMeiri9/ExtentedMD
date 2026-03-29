@@ -7,7 +7,7 @@ export function watchFile(pathToWatch: string) {
   watcher = watch(pathToWatch, {
     ignored: (filePath, stats) => {
       if (!stats) return false;
-      return stats.isFile() && !filePath.endsWith(".tmd");
+      return stats.isFile() && !filePath.endsWith(".emd");
     },
     persistent: true,
   });

@@ -1,14 +1,14 @@
 import * as vscode from "vscode";
 import { getVariablesForBraces } from "./tools";
 
-export class TmdDefinitionProvider implements vscode.DefinitionProvider {
+export class EmdDefinitionProvider implements vscode.DefinitionProvider {
   provideDefinition(
     document: vscode.TextDocument,
-    position: vscode.Position
+    position: vscode.Position,
   ): vscode.ProviderResult<vscode.Definition> {
     const wordRange = document.getWordRangeAtPosition(
       position,
-      /[\w\-]+/ // adjust if variable names allow more chars
+      /[\w\-]+/, // adjust if variable names allow more chars
     );
     if (!wordRange) return;
 
