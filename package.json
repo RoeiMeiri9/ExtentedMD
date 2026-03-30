@@ -1,0 +1,27 @@
+{
+  "name": "extendedmd",
+  "version": "1.0.0",
+  "description": "**ExtendedMD (EMD)** is a powerful enhancement of the standard Markdown syntax, designed to bridge the gap between static text and dynamic content.",
+  "scripts": {
+    "build": "tsc -b",
+    "watch": "tsc -b --watch",
+    "test-core": "node packages/core/dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoeiMeiri9/ExtendedMD.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RoeiMeiri9/ExtendedMD/issues"
+  },
+  "homepage": "https://github.com/RoeiMeiri9/ExtendedMD#readme",
+  "devDependencies": {
+    "typescript": "^6.0.2"
+  }
+}

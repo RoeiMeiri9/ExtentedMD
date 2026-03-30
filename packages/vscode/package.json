@@ -1,5 +1,5 @@
 {
-  "name": "extendedmd",
+  "name": "extendedmd-vscode",
   "displayName": "ExtendedMD",
   "description": "Extending Markdown, allowing you to create dynamic and reusable content within your Markdown files.",
   "version": "0.0.1",
@@ -62,6 +62,7 @@
   ],
   "main": "./out/extension.js",
   "scripts": {
+    "build": "npm run compile",
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
@@ -69,18 +70,16 @@
     "test": "node ./out/test/runTest.js"
   },
   "repository": {
-    "type": "github",
+    "type": "git",
     "url": "https://github.com/RoeiMeiri9/extendedmd"
   },
   "dependencies": {
-    "js-yaml": "^4.1.0",
+    "@emd/core": "*",
     "prettier": "^3.6.2"
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.10.1",
     "@types/vscode": "^1.106.1",
-    "typescript": "^5.9.3",
-    "vscode": "^1.1.37"
+    "typescript": "^5.9.3"
   }
 }
