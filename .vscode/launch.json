@@ -13,12 +13,12 @@
       "name": "Debug CLI",
       "type": "node",
       "request": "launch",
-      "cwd": "${workspaceFolder}/packages/core",
-      "program": "${workspaceFolder}/packages/core/dist/index.js",
+      "cwd": "${workspaceFolder}/packages/cli",
+      "program": "${workspaceFolder}/packages/cli/dist/index.js",
       "args": ["--watch", "../../tests/readme.emd"],
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/packages/core/dist/**/*.js"]
+      "outFiles": ["${workspaceFolder}/packages/cli/dist/**/*.js"]
     }
   ]
 }

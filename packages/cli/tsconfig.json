@@ -5,8 +5,9 @@
     "module": "nodenext",
     "target": "esnext",
     "composite": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "references": [{ "path": "../core" }],
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../core/src/utils/utils.ts"]
 }

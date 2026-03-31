@@ -4,8 +4,7 @@
   "description": "**ExtendedMD (EMD)** is a powerful enhancement of the standard Markdown syntax, designed to bridge the gap between static text and dynamic content.",
   "scripts": {
     "build": "tsc -b",
-    "watch": "tsc -b --watch",
-    "test-core": "node packages/core/dist/index.js"
+    "watch": "tsc -b --watch"
   },
   "repository": {
     "type": "git",

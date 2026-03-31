@@ -1,5 +1,5 @@
 import { FSWatcher, watch } from "chokidar";
-import { processFile } from "./parser.js";
+import { processFile } from "@emd/core";
 
 let watcher: FSWatcher;
 

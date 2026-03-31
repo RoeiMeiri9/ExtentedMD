@@ -13,3 +13,10 @@ export type OrchestratorOutput = {
   content: string;
   status: Status;
 };
+
+export interface EmdLogger {
+  info: (...args: any[]) => void;
+  success: (...args: any[]) => void;
+  warn: (...args: any[]) => void;
+  error: (...args: any[]) => void;
+}

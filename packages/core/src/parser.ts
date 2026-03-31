@@ -5,7 +5,7 @@ import type {
   FMContent,
   OrchestratorOutput,
 } from "./types.js";
-import { Logger } from "./utils/logger.js";
+import { logger } from "./utils/logger.js";
 
 export async function processFile(path: string) {
   const startTime = process.hrtime.bigint();
@@ -20,9 +20,9 @@ export async function processFile(path: string) {
     const time = endTime - startTime;
 
     await fsWriteFile(outPath, processed.content, "utf-8");
-    Logger.reportCompilation(path, time, processed.status);
+    logger.reportCompilation(path, time, processed.status);
   } catch (err) {
-    Logger.error("Error processing file:", err);
+    logger.error("Error processing file:", err);
   }
 }
 
@@ -62,7 +62,7 @@ async function extractVariables(content: string): Promise<VariablesMatcher> {
       EOL,
     };
   } catch (err) {
-    Logger.yamlException(err as YAMLException);
+    logger.yamlException(err as YAMLException);
     return {
       encounteredError: true,
       EOL,
@@ -74,19 +74,20 @@ async function extractVariables(content: string): Promise<VariablesMatcher> {
 
 function parseContent(text: string, fm: VariablesMatcher): string {
   const startIndex = fm.fmMatch ? fm.fmMatch[0].length : 0;
+  //Content under the Front Matter
   const body = text
     .slice(startIndex)
     .replace(/^---[\r\n]+/, "")
     .trimStart();
 
-  let out = fm.newFMContent
+  let newFM = fm.newFMContent
     ? `---${fm.EOL}${fm.newFMContent}---${fm.EOL}${fm.EOL}`
     : "";
 
-  if (!fm.variables) return out + body;
+  if (!fm.variables) return newFM + body;
 
   return (
-    out +
+    newFM +
     body.replace(/\{\{\s*([\s\S]*?)\s*\}\}/g, (match, varName) => {
       return fm.variables![varName.trim()] ?? "";
     })
