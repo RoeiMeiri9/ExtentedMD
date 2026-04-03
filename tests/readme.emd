@@ -3,7 +3,6 @@ variables:
   wow: "hey"
   var2: "hello!"
   color: "$\\color{black}"
-  wo
 ---
 
 {{wow}}

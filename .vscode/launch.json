@@ -15,10 +15,14 @@
       "request": "launch",
       "cwd": "${workspaceFolder}/packages/cli",
       "program": "${workspaceFolder}/packages/cli/dist/index.js",
-      "args": ["--watch", "../../tests/readme.emd"],
+      "args": ["--watch", "../../tests/readme.emd", "-v"],
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
-      "outFiles": ["${workspaceFolder}/packages/cli/dist/**/*.js"]
+      "outFiles": [
+        "${workspaceFolder}/packages/cli/dist/**/*.js",
+        "${workspaceFolder}/packages/core/dist/**/*.js"
+      ],
+      "console": "integratedTerminal"
     }
   ]
 }

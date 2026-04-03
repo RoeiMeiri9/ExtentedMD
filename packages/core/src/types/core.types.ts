@@ -1,3 +1,5 @@
+import type { Status } from "./logger.types.js";
+
 export type OrchestratorOutput = {
   content: string;
   status: Status;
@@ -7,20 +9,6 @@ export type OrchestratorOutput = {
     status: Status,
   ) => void;
 };
-
-export enum Status {
-  SUCCESS = 1,
-  WARN = 2,
-  ERROR = 3,
-}
-
-export type StatusLogFunctions = {
-  [K in keyof typeof Status]: (...args: any[]) => void;
-};
-
-export interface EmdLogger extends StatusLogFunctions {
-  INFO: (...args: any[]) => void;
-}
 
 export type FMContent = Record<string, any>;
 
@@ -32,3 +20,5 @@ export type VariableCall = {
   index: number;
   error?: string; // TODO: Make an actual error in a different commit
 };
+
+export type varPosition = { line: number; column: number };

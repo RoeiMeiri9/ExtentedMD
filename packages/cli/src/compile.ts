@@ -1,6 +1,36 @@
-import { processFile } from "@emd/core";
+import { compile, getOutPath, Status } from "@emd/core";
 import { writeFile, getContent } from "./fs.js";
+import {
+  Logger,
+  normalizedPath,
+  printDiagnostic,
+  reportCompilation,
+} from "./utils/logger.js";
 
-export async function compile(path: string) {
-  await processFile(await getContent(path), path, writeFile);
+export async function compileFile(path: string, verbose: boolean) {
+  try {
+    const content = await getContent(path);
+    const { compiled, status, diagnostics, duration } = await compile(content);
+
+    diagnostics.forEach((diagnostic) =>
+      printDiagnostic(diagnostic, content, verbose),
+    );
+
+    const outPath = getOutPath(path);
+
+    if (status !== Status.ERROR) {
+      await writeFile(compiled, outPath);
+    }
+
+    reportCompilation(
+      normalizedPath(status === Status.ERROR ? path : outPath),
+      duration,
+      status,
+    );
+  } catch (err) {
+    Logger.ERROR(
+      `Failed to read or write file: ${path}`,
+      err instanceof Error ? err.message : "",
+    );
+  }
 }

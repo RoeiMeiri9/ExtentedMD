@@ -1,21 +1,65 @@
-import { EmdLogger } from "@emd/core";
+import { Status, Duration } from "@emd/core";
+import type { Diagnostic, EmdLogger, StatusLogFunctions } from "@emd/core";
 
-const COLORS = {
-  GREEN: "\x1b[32m",
-  AMBER: "\x1b[38;2;204;167;0m",
-  RESET: "\x1b[0m",
-};
+import { codeFrameColumns } from "@babel/code-frame";
+import chalk from "chalk";
+
+const amber = chalk.rgb(204, 167, 0);
 
 export const Logger: EmdLogger = {
-  INFO: (...args: any[]) => console.log("[INFO]", ...args),
-  SUCCESS: (...args: any[]) =>
-    console.log(...coloredPrint(COLORS.GREEN, "[SUCCESS]", ...args)),
-  WARN: (...args: any[]) =>
-    console.warn(...coloredPrint(COLORS.AMBER, "[WARN]", ...args)),
-  ERROR: (...args: any[]) => console.error("[ERROR]", ...args),
+  INFO: (...args: any[]) => console.log(chalk.blue("[INFO]"), ...args),
+  SUCCESS: (...args: any[]) => console.log(chalk.green("[SUCCESS]"), ...args),
+  WARN: (...args: any[]) => console.warn(amber("[WARN]"), ...args),
+  ERROR: (...args: any[]) => console.error(chalk.red("[ERROR]"), ...args),
 };
 
-function coloredPrint(color: string, status: string, ...args: any[]) {
-  const lastArg = args.pop();
-  return [color + status, ...args, lastArg + COLORS.RESET];
+export function normalizedPath(path: string) {
+  return path.replace(/\\/g, "/");
+}
+
+export function reportCompilation(
+  path: string,
+  durationNanos: Duration,
+  status: Status,
+) {
+  const statusMessages = {
+    [Status.SUCCESS]: `Compiled successfully`,
+    [Status.WARN]: `Compiled with warnings`,
+    [Status.ERROR]: `Compilation of .emd file failed with errors`,
+  };
+
+  const statusName = Status[status] as keyof StatusLogFunctions;
+  const baseMessage = statusMessages[status];
+  const timeInfo = `(${durationNanos})`;
+
+  const finalMessage = `${baseMessage}: ${path} ${timeInfo}`;
+
+  Logger[statusName](finalMessage);
+}
+
+export function printDiagnostic(
+  diagnostic: Diagnostic,
+  source: string,
+  verbose = false,
+) {
+  const { level, message, line, column } = diagnostic;
+
+  const position = line ? ` (${line}:${column})` : "";
+  const frame = line
+    ? `\n${codeFrameColumns(source, { start: { line, column: column || 1 } }, { highlightCode: true })}`
+    : "";
+  const finalOutput = `${message}${position}${frame}`;
+
+  const logMap: Record<Status, (...args: any[]) => void> = {
+    [Status.SUCCESS]: Logger.SUCCESS,
+    [Status.WARN]: Logger.WARN,
+    [Status.ERROR]: Logger.ERROR,
+  };
+
+  const logFn = logMap[level] || Logger.INFO;
+  logFn(finalOutput);
+
+  if (verbose && diagnostic.stack) {
+    console.log(diagnostic.stack);
+  }
 }

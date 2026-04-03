@@ -1,10 +1,10 @@
 import { FSWatcher, watch } from "chokidar";
 import { Logger } from "./utils/logger.js";
-import { compile } from "./compile.js";
+import { compileFile } from "./compile.js";
 
 let watcher: FSWatcher;
 
-export function watchFile(pathToWatch: string) {
+export function watchFile(pathToWatch: string, verbose = false) {
   watcher = watch(pathToWatch, {
     ignored: (filePath, stats) => {
       if (!stats) return false;
@@ -12,7 +12,7 @@ export function watchFile(pathToWatch: string) {
     },
     persistent: true,
   });
-  watcher.on("change", compile);
+  watcher.on("change", (path) => compileFile(path, verbose));
 }
 
 export async function clear() {
